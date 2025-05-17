@@ -38,7 +38,7 @@ npx -y @idachev/mcp-javadc
 npm install -g @idachev/mcp-javadc
 
 # Run the server
-idachev-mcp-javadc
+mcpjavadc
 ```
 
 ### Option 3: From Source
