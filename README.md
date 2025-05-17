@@ -159,6 +159,22 @@ Example request:
 }
 ```
 
+## Important Note on Using the Package
+
+This package requires a specific version of the MCP SDK and direct import paths. When importing in your own projects or running with npx, you may need to use direct paths to the SDK components:
+
+```javascript
+// Instead of
+import { McpServer } from '@modelcontextprotocol/sdk';
+
+// Use
+import { McpServer } from '@modelcontextprotocol/sdk/dist/esm/server/mcp.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/dist/esm/server/streamableHttp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/dist/esm/server/stdio.js';
+```
+
+This is due to the package export structure of the SDK.
+
 ## Configuration
 
 ### Environment Variables

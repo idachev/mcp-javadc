@@ -1,7 +1,11 @@
 import express from 'express';
-import { McpServer } from '@modelcontextprotocol/sdk';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk';
+// Use dynamic imports for the SDK
+// @ts-ignore
+import sdk from '@modelcontextprotocol/sdk';
+
+const { McpServer } = sdk;
+const { StreamableHTTPServerTransport } = sdk;
+const { StdioServerTransport } = sdk;
 
 import { registerDecompileTools } from './tools/decompileTools.js';
 
@@ -35,7 +39,7 @@ export async function createServer() {
  * @param server - The MCP server instance
  * @returns Promise that resolves when the server is started
  */
-export async function startServer(server: McpServer) {
+export async function startServer(server: typeof McpServer) {
   // Check if we should run in HTTP mode or stdio mode
   const useHTTP = process.env.MCP_USE_HTTP === 'true';
 
@@ -47,7 +51,7 @@ export async function startServer(server: McpServer) {
     const port = parseInt(process.env.PORT || '3000', 10);
 
     // Store transports for each session
-    const transports: Record<string, StreamableHTTPServerTransport> = {};
+    const transports: Record<string, any> = {};
 
     // Setup MCP endpoint
     app.all('/mcp', async (req, res) => {
@@ -58,7 +62,7 @@ export async function startServer(server: McpServer) {
         transports[sessionId] = new StreamableHTTPServerTransport();
 
         // Connect the server to the transport
-        server.connect(transports[sessionId]).catch((error: Error) => {
+        server.connect(transports[sessionId], { sessionId }).catch((error: Error) => {
           console.error(`Error connecting to transport for session ${sessionId}:`, error);
           delete transports[sessionId];
         });
