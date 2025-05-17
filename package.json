@@ -23,7 +23,8 @@
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint --fix 'src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
-    "prepublishOnly": "npm run lint"
+    "prepublishOnly": "npm run lint",
+    "prepare": "husky"
   },
   "keywords": [
     "mcp",
@@ -60,8 +61,13 @@
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "src/**/*.ts": ["eslint --fix", "prettier --write"]
   }
 }
