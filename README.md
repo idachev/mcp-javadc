@@ -25,10 +25,10 @@ You can run the server directly with npx without installing:
 
 ```bash
 # Run in stdio mode (for MCP clients)
-npx -y @modelcontextprotocol/server-javadc
+npx -y @idachev/mcp-javadc
 
 # Run in HTTP mode
-npx -y @modelcontextprotocol/server-javadc --http --port 3000
+npx -y @idachev/mcp-javadc --http --port 3000
 ```
 
 Note: The server provides a compatible CommonJS implementation to ensure broad compatibility with different Node.js environments.
@@ -37,10 +37,10 @@ Note: The server provides a compatible CommonJS implementation to ensure broad c
 
 ```bash
 # Install globally
-npm install -g @modelcontextprotocol/server-javadc
+npm install -g @idachev/mcp-javadc
 
 # Run the server
-mcp-javadc
+idachev-mcp-javadc
 ```
 
 ### Option 3: From Source
@@ -102,7 +102,7 @@ Example MCP client configuration:
   "mcpServers": {
     "javaDecompiler": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-javadc"],
+      "args": ["-y", "@idachev/mcp-javadc"],
       "env": {
         "CLASSPATH": "/path/to/java/classes"
       }

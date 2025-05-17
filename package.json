@@ -1,11 +1,11 @@
 {
-  "name": "@modelcontextprotocol/server-javadc",
-  "version": "1.0.0",
+  "name": "@idachev/mcp-javadc",
+  "version": "1.1.0",
   "description": "Model Context Protocol (MCP) server for Java decompilation",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "mcp-javadc": "server.cjs"
+    "idachev-mcp-javadc": "server.cjs"
   },
   "files": [
     "dist",
@@ -35,16 +35,16 @@
     "modelcontextprotocol",
     "bytecode"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Ivan Dachev <i_dachev@yahoo.co.uk>",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/mcp-javadc.git"
+    "url": "git+https://github.com/idachev/mcp-javadc.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/mcp-javadc/issues"
+    "url": "https://github.com/idachev/mcp-javadc/issues"
   },
-  "homepage": "https://github.com/yourusername/mcp-javadc#readme",
+  "homepage": "https://github.com/idachev/mcp-javadc#readme",
   "engines": {
     "node": ">=16.0.0"
   },
