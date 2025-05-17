@@ -96,6 +96,7 @@ export async function startServer(server: typeof McpServer) {
 
 /**
  * Main function to run the server
+ * This function initializes and starts the MCP server
  */
 async function main() {
   try {
