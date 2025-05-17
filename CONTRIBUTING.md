@@ -22,8 +22,7 @@ Thank you for considering contributing to this project! Here are some guidelines
 
 ## Code Structure
 
-- `index.js` - Main server file
-- `server.cjs` - CommonJS entry point
+- `index.js` - Main server file that contains all the logic
 
 ## Pull Request Process
 

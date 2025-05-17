@@ -28,7 +28,6 @@ You can run the server directly with npx without installing:
 npx -y @idachev/mcp-javadc
 ```
 
-Note: The server provides a compatible CommonJS implementation to ensure broad compatibility with different Node.js environments.
 
 ### Option 2: Global Installation
 

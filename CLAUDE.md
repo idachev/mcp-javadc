@@ -16,7 +16,6 @@ This project is a Model Context Protocol (MCP) server that provides Java decompi
 ## Project Structure
 
 - `index.js`: Main server file that contains all the logic
-- `server.cjs`: CommonJS entry point that loads the main file
 
 ## Development Commands
 
