@@ -17,6 +17,15 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ],
       "env": {}
+    },
+    "javadc": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@idachev/mcp-javadc"
+      ],
+      "env": {}
     }
   }
 }

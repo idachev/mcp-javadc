@@ -22,7 +22,7 @@ const PACKAGE_VERSION = '1.0.0';
 export async function createServer() {
   // Initialize MCP server
   const server = new McpServer({
-    name: 'java-decompiler',
+    name: 'javadc',
     version: PACKAGE_VERSION,
     description: 'MCP server for decompiling Java class files',
   });

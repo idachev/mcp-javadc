@@ -248,7 +248,7 @@ async function main() {
   // Print banner
   console.error(`
 ---------------------------------------------
-MCP Java Decompiler Server
+MCP Java Decompiler Server (javadc)
 ---------------------------------------------
 Model Context Protocol (MCP) server that
 decompiles Java bytecode into readable source
