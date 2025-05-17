@@ -58,12 +58,10 @@ function createFixtures() {
     console.log('Attempting to compile Java file...');
     execSync(`javac -d ${FIXTURES_DIR} ${SAMPLE_JAVA_PATH}`);
     console.log(`Successfully compiled to: ${TEST_CLASS_PATH}`);
-    
-    // Create manifest file
+
     fs.writeFileSync(MANIFEST_PATH, MANIFEST_CONTENT);
     console.log(`Created manifest file: ${MANIFEST_PATH}`);
-    
-    // Create JAR file
+
     try {
       console.log('Creating JAR file...');
       execSync(`jar cfm ${TEST_JAR_PATH} ${MANIFEST_PATH} -C ${FIXTURES_DIR} SampleClass.class`);
@@ -71,9 +69,9 @@ function createFixtures() {
     } catch (jarError) {
       console.error('Could not create JAR file. You may need to install JDK or create it manually.');
       console.error(`Error: ${jarError.message}`);
-      
+
       if (!fs.existsSync(TEST_JAR_PATH)) {
-        // Create a placeholder JAR file
+
         fs.writeFileSync(TEST_JAR_PATH, 'PLACEHOLDER_JAR_FILE');
         console.log(`Created placeholder JAR file: ${TEST_JAR_PATH}`);
         console.log(
@@ -81,7 +79,7 @@ function createFixtures() {
         );
       }
     }
-    
+
   } catch (error) {
     console.error(
       'Could not compile Java file. You may need to install JDK or compile it manually.'
@@ -95,7 +93,7 @@ function createFixtures() {
         'NOTE: This is not a valid Java class file. Tests will run but will likely fail.'
       );
     }
-    
+
     if (!fs.existsSync(TEST_JAR_PATH)) {
       fs.writeFileSync(TEST_JAR_PATH, 'PLACEHOLDER_JAR_FILE');
       console.log(`Created placeholder JAR file: ${TEST_JAR_PATH}`);
