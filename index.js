@@ -187,7 +187,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 });
 
 server.setRequestHandler(CallToolRequestSchema, async request => {
-  const { tool, args } = request.params;
+  const { name: tool, arguments: args } = request.params;
 
   switch (tool) {
     case 'decompile-from-path': {
