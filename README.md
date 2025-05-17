@@ -180,21 +180,6 @@ If you encounter issues with a specific class file, try:
 - Ensuring the class file is a valid Java bytecode file
 - Checking for corrupt class files
 
-### MCP SDK Integration
-
-When importing directly in TypeScript/JavaScript projects, you may need to use direct paths to the SDK components:
-
-```javascript
-// Instead of
-import { McpServer } from '@modelcontextprotocol/sdk';
-
-// Use
-import { McpServer } from '@modelcontextprotocol/sdk/dist/esm/server/mcp.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/dist/esm/server/streamableHttp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/dist/esm/server/stdio.js';
-```
-
-This is due to the package export structure of the SDK.
 
 ## Configuration
 
