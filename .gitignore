@@ -72,6 +72,9 @@ temp/
 # Typescript
 tsconfig.tsbuildinfo
 
+# Package files
+idachev-mcp-javadc-*.tgz
+
 # Yarn
 .yarn/*
 !.yarn/cache
