@@ -15,11 +15,8 @@ This project is a Model Context Protocol (MCP) server that provides Java decompi
 
 ## Project Structure
 
-- `src/index.ts`: Main server entry point that sets up MCP server and transport
-- `src/services/decompiler.ts`: Core decompiler service that interacts with CFR decompiler
-- `src/services/protocolHandlers.ts`: Registers MCP protocol method handlers
-- `src/tools/decompileTools.ts`: MCP tool definitions for decompilation operations
-- `src/types/modelcontextprotocol.d.ts`: TypeScript definitions for MCP SDK
+- `index.js`: Main server file that contains all the logic
+- `server.cjs`: CommonJS entry point that loads the main file
 
 ## Development Commands
 
@@ -28,9 +25,6 @@ To run frequently used commands:
 ```bash
 # Install dependencies
 npm install
-
-# Build the TypeScript project
-npm run build
 
 # Run in development mode
 npm run dev
@@ -55,7 +49,7 @@ The server provides two tools:
 
 ## Technology Stack
 
-- TypeScript
+- JavaScript (ES Modules)
 - Node.js
 - Express (for HTTP transport)
 - CFR (@run-slicer/cfr - JavaScript port of the CFR Java decompiler)
@@ -72,14 +66,6 @@ Potential enhancements to consider:
 - Implement caching of decompiled results
 - Add more configuration options (decompiler settings)
 - Create a Docker container for easier deployment
-
-## TypeScript Notes
-
-When building or updating the TypeScript code:
-
-- Ensure MCP SDK imports use correct paths (@modelcontextprotocol/sdk)
-- The MCP tools API changed between versions, check docs for current format
-- Use proper type annotations, especially for callback parameters
 
 ## MCP Protocol Notes
 
@@ -98,7 +84,7 @@ The server explicitly registers handlers for core MCP protocol methods:
 1. `mcp.tool.list`: Returns available tools and their parameters
 2. `mcp.tool.execute`: Handles tool execution requests
 
-These registrations are essential for compatibility with Claude and other MCP clients and are implemented in `src/services/protocolHandlers.ts`.
+These registrations are essential for compatibility with Claude and other MCP clients.
 
 ## Troubleshooting
 

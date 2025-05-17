@@ -15,22 +15,15 @@ Thank you for considering contributing to this project! Here are some guidelines
    npm install
    ```
 
-3. Build the project
-   ```bash
-   npm run build
-   ```
-
-4. Run the development server
+3. Run the development server
    ```bash
    npm run dev
    ```
 
 ## Code Structure
 
-- `src/index.ts` - Main entry point
-- `src/services/` - Core services
-- `src/tools/` - MCP tool implementations
-- `src/types/` - TypeScript type definitions
+- `index.js` - Main server file
+- `server.cjs` - CommonJS entry point
 
 ## Pull Request Process
 
@@ -46,7 +39,7 @@ Thank you for considering contributing to this project! Here are some guidelines
 - Follow the existing code style
 - Write clear commit messages
 - Add documentation for new features
-- Make sure the build passes (`npm run build`)
+- Make sure everything works (`npm run dev`)
 
 ## License
 

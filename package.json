@@ -2,27 +2,26 @@
   "name": "@idachev/mcp-javadc",
   "version": "1.1.5",
   "description": "Model Context Protocol (MCP) server for Java decompilation",
-  "main": "dist/index.js",
+  "main": "index.js",
   "type": "module",
   "bin": {
     "idachev-mcp-javadc": "server.cjs"
   },
   "files": [
-    "dist",
+    "index.js",
     "server.cjs",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
     "start": "node server.cjs",
-    "dev": "ts-node --esm src/index.ts",
-    "test": "npm run build && node test/cfr-decompiler.test.js",
+    "dev": "node index.js",
+    "test": "node test/cfr-decompiler.test.js",
     "test:setup": "node test/create-test-fixtures.js",
     "start:http": "node server.cjs --http --port 3000",
-    "lint": "eslint 'src/**/*.ts'",
-    "lint:fix": "eslint --fix 'src/**/*.ts'",
-    "format": "prettier --write 'src/**/*.ts'",
+    "lint": "eslint index.js",
+    "lint:fix": "eslint --fix index.js",
+    "format": "prettier --write index.js",
     "prepublishOnly": "npm run lint",
     "prepare": "husky"
   },
@@ -54,21 +53,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.10.5",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.0.0",
-    "prettier": "^3.5.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "prettier": "^3.5.3"
   },
   "lint-staged": {
-    "src/**/*.ts": [
+    "index.js": [
       "eslint --fix",
       "prettier --write"
     ]

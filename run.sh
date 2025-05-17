@@ -33,17 +33,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Build the project if needed
-if [ ! -d "dist" ]; then
-  echo "Building project..."
-  npm run build
-fi
-
 # Run the server
 if [ "$MODE" = "http" ]; then
   echo "Starting server in HTTP mode on port $PORT..."
-  PORT=$PORT MCP_USE_HTTP=true node dist/index.js
+  PORT=$PORT MCP_USE_HTTP=true node index.js
 else
   echo "Starting server in stdio mode..."
-  node dist/index.js
+  node index.js
 fi
