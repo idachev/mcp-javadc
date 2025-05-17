@@ -65,10 +65,8 @@ npm start
 The easiest way to run the server:
 
 ```bash
-# Run with the provided script
-./run.sh
+npm start
 ```
-
 
 ### Integrating with MCP Clients
 

@@ -31,9 +31,6 @@ npm run dev
 
 # Run using the start script
 npm start
-
-# Use helper script
-./run.sh
 ```
 
 ## MCP Tools
