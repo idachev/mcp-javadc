@@ -1,7 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import * as os from 'os';
-import * as crypto from 'crypto';
 import { decompile } from '@run-slicer/cfr';
 
 /**
@@ -21,10 +19,7 @@ export class DecompilerService {
 
       // Read the class file
       const classData = await fs.readFile(classFilePath);
-      
-      // Get class name and internal name
-      const className = path.basename(classFilePath, '.class');
-      const packagePath = path.dirname(classFilePath);
+
       // Convert file path to package format (approximate)
       const internalName = this.getInternalNameFromPath(classFilePath);
 
@@ -34,20 +29,20 @@ export class DecompilerService {
           if (name === internalName) {
             return classData;
           }
-          
+
           // For basic Java language classes, return an empty Buffer
           // This prevents "Could not load the following classes" warnings
           if (name.startsWith('java/lang/')) {
             return Buffer.from([]);
           }
-          
+
           return null; // No other supporting classes provided
         },
         options: {
           // CFR options can be configured here
-          "hidelangimports": "true",
-          "showversion": "false"
-        }
+          hidelangimports: 'true',
+          showversion: 'false',
+        },
       });
 
       return decompiled;
@@ -76,30 +71,30 @@ export class DecompilerService {
 
       // Get internal package name for CFR (replace dots with slashes)
       const internalName = packageName.replace(/\./g, '/');
-      
+
       // Read the class file
       const classData = await fs.readFile(classFilePath);
-      
+
       // Use CFR to decompile
       const decompiled = await decompile(internalName, {
         source: async (name: string) => {
           if (name === internalName) {
             return classData;
           }
-          
+
           // For basic Java language classes, return an empty Buffer
           // This prevents "Could not load the following classes" warnings
           if (name.startsWith('java/lang/')) {
             return Buffer.from([]);
           }
-          
+
           return null; // No other supporting classes provided
         },
         options: {
           // CFR options can be configured here
-          "hidelangimports": "true",
-          "showversion": "false"
-        }
+          hidelangimports: 'true',
+          showversion: 'false',
+        },
       });
 
       return decompiled;
@@ -154,21 +149,21 @@ export class DecompilerService {
   private getInternalNameFromPath(classFilePath: string): string {
     // Get the filename without extension
     const className = path.basename(classFilePath, '.class');
-    
+
     // Attempt to find package structure in path
     const pathParts = classFilePath.split(path.sep);
     const classNameIndex = pathParts.findIndex(part => part === className + '.class');
-    
+
     if (classNameIndex <= 0) {
       // If we can't determine package structure, just return the class name
       return className;
     }
-    
+
     // Look backward to find potential package parts
     // This is a heuristic and may not always be correct
-    let packageParts: string[] = [];
+    const packageParts: string[] = [];
     let i = classNameIndex - 1;
-    
+
     // This logic attempts to identify package parts by looking for lowercase directory names
     // This is an imperfect heuristic but better than nothing
     while (i >= 0) {
@@ -182,12 +177,12 @@ export class DecompilerService {
       }
       i--;
     }
-    
+
     // Combine package parts with the class name
     if (packageParts.length > 0) {
       return packageParts.join('/') + '/' + className;
     }
-    
+
     return className;
   }
 }

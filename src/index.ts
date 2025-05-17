@@ -1,6 +1,6 @@
 import express from 'express';
 // Use dynamic imports for the SDK
-// @ts-ignore
+// @ts-expect-error Importing SDK dynamically
 import sdk from '@modelcontextprotocol/sdk';
 
 const { McpServer } = sdk;
@@ -51,7 +51,7 @@ export async function startServer(server: typeof McpServer) {
     const port = parseInt(process.env.PORT || '3000', 10);
 
     // Store transports for each session
-    const transports: Record<string, any> = {};
+    const transports: Record<string, typeof StreamableHTTPServerTransport> = {};
 
     // Setup MCP endpoint
     app.all('/mcp', async (req, res) => {

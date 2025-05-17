@@ -1,24 +1,21 @@
-import { z } from 'zod';
-// @ts-ignore
+// @ts-expect-error Importing SDK dynamically
 import sdk from '@modelcontextprotocol/sdk';
-const { McpServer } = sdk;
-import type { McpToolParams } from '../types/modelcontextprotocol.js';
 import { DecompilerService } from '../services/decompiler.js';
 
 /**
  * Register decompilation tools with the MCP server
  */
-export function registerDecompileTools(server: any) {
+export function registerDecompileTools(server: typeof sdk.McpServer) {
   const decompilerService = new DecompilerService();
 
   // Tool 1: Decompile from file path
   server.tool(
-    'decompile-from-path', 
+    'decompile-from-path',
     'Decompiles a Java .class file from a given file path',
-    async (extra) => {
+    async extra => {
       const { args } = extra.request.params;
       const classFilePath = args?.classFilePath as string;
-      
+
       try {
         if (!classFilePath) {
           return {
@@ -30,7 +27,7 @@ export function registerDecompileTools(server: any) {
             ],
           };
         }
-        
+
         const decompiled = await decompilerService.decompileFromPath(classFilePath);
         return {
           content: [
@@ -60,11 +57,11 @@ export function registerDecompileTools(server: any) {
   server.tool(
     'decompile-from-package',
     'Decompiles a Java class from a package name',
-    async (extra) => {
+    async extra => {
       const { args } = extra.request.params;
       const packageName = args?.packageName as string;
-      const classpath = args?.classpath as string[] || [];
-      
+      const classpath = (args?.classpath as string[]) || [];
+
       try {
         if (!packageName) {
           return {
@@ -76,7 +73,7 @@ export function registerDecompileTools(server: any) {
             ],
           };
         }
-        
+
         const decompiled = await decompilerService.decompileFromPackage(packageName, classpath);
         return {
           content: [
