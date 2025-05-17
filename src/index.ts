@@ -13,7 +13,7 @@ import { registerProtocolHandlers } from './services/protocolHandlers.js';
 /**
  * Package version from package.json
  */
-const PACKAGE_VERSION = '1.1.4';
+const PACKAGE_VERSION = '1.1.5';
 
 /**
  * Create and initialize the MCP server
