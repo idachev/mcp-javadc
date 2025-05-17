@@ -6,14 +6,28 @@ import { decompile } from '@run-slicer/cfr';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import * as os from 'os';
+import { promisify } from 'util';
+import { exec } from 'child_process';
 
 const SERVER_NAME = 'javadc';
-const PACKAGE_VERSION = '1.1.5';
+const PACKAGE_VERSION = '1.2.0';
 
 class DecompilerService {
   async decompileFromPath(classFilePath) {
     try {
       await fs.access(classFilePath);
+
+      // Check if the file is a JAR
+      const isJar = classFilePath.toLowerCase().endsWith('.jar');
+
+      if (isJar) {
+        throw new Error(
+          'JAR files must be decompiled using decompileFromJar with className parameter'
+        );
+      }
+
+      // Regular class file decompilation
       const classData = await fs.readFile(classFilePath);
       const internalName = this.getInternalNameFromPath(classFilePath);
 
@@ -36,6 +50,85 @@ class DecompilerService {
       return decompiled;
     } catch (error) {
       throw new Error(`Failed to decompile class file: ${error.message}`);
+    }
+  }
+
+  async decompileFromJar(jarFilePath, className) {
+    if (!className) {
+      throw new Error('Class name must be specified for JAR decompilation');
+    }
+
+    // Create a temporary directory for extraction
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'javadc-'));
+    const execPromise = promisify(exec);
+
+    try {
+      // Extract the list of class files in the JAR
+      const { stdout } = await execPromise(`jar tf "${jarFilePath}" | grep ".class$"`);
+      const classFiles = stdout.trim().split('\n');
+
+      if (classFiles.length === 0) {
+        throw new Error('No class files found in the JAR file');
+      }
+
+      // Extract all class files - switch to current directory then extract
+      await execPromise(`cd "${tempDir}" && jar xf "${jarFilePath}"`);
+
+      // Determine which class to decompile
+      let targetClassFile = null;
+      let internalName = null;
+
+      // Convert package.class notation to internal format (with /)
+      internalName = className.replace(/\./g, '/');
+      targetClassFile = internalName + '.class';
+
+      // Check if the class exists in the JAR
+      const classExists = classFiles.some(cf => cf.trim() === targetClassFile);
+      if (!classExists) {
+        throw new Error(`Class '${className}' not found in JAR file`);
+      }
+
+      const extractedClassPath = path.join(tempDir, targetClassFile);
+
+      // Read the class data
+      const classData = await fs.readFile(extractedClassPath);
+
+      // Decompile the class
+      const decompiled = await decompile(internalName, {
+        source: async name => {
+          if (name === internalName) {
+            return classData;
+          }
+
+          // Handle other class references from the JAR
+          const otherClassFile = name + '.class';
+          const otherClassPath = path.join(tempDir, otherClassFile);
+
+          try {
+            return await fs.readFile(otherClassPath);
+          } catch {
+            if (name.startsWith('java/lang/')) {
+              return Buffer.from([]);
+            }
+            return null;
+          }
+        },
+        options: {
+          hidelangimports: 'true',
+          showversion: 'false',
+        },
+      });
+
+      return decompiled;
+    } catch (error) {
+      throw new Error(`Failed to decompile JAR file: ${error.message}`);
+    } finally {
+      // Clean up temporary directory
+      try {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      } catch (cleanupError) {
+        console.error(`Error cleaning up temporary directory: ${cleanupError.message}`);
+      }
     }
   }
 
@@ -179,6 +272,25 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['packageName'],
         },
       },
+      {
+        name: 'decompile-from-jar',
+        description: 'Decompiles a Java class from a JAR file',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            jarFilePath: {
+              type: 'string',
+              description: 'The absolute path to the JAR file',
+            },
+            className: {
+              type: 'string',
+              description:
+                'Fully qualified class name to decompile from the JAR (e.g., "com.example.MyClass")',
+            },
+          },
+          required: ['jarFilePath', 'className'],
+        },
+      },
     ],
   };
 });
@@ -227,6 +339,42 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 
       try {
         const decompiled = await decompilerService.decompileFromPackage(packageName, classpath);
+        return {
+          content: [{ type: 'text', text: decompiled }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: `Error: ${error.message}` }],
+        };
+      }
+    }
+
+    case 'decompile-from-jar': {
+      const { jarFilePath, className } = args;
+      if (!jarFilePath) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'Error: Missing jarFilePath parameter',
+            },
+          ],
+        };
+      }
+
+      if (!className) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'Error: Missing className parameter',
+            },
+          ],
+        };
+      }
+
+      try {
+        const decompiled = await decompilerService.decompileFromJar(jarFilePath, className);
         return {
           content: [{ type: 'text', text: decompiled }],
         };

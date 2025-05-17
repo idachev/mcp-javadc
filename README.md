@@ -6,6 +6,8 @@ A Model Context Protocol (MCP) server for decompiling Java class files. This ser
 
 - Decompile Java .class files from file path
 - Decompile Java classes from package name (e.g., java.util.ArrayList)
+- Decompile Java classes from JAR files
+- Specify which class to extract from JAR files
 - Full MCP-compatible API
 - Stdio transport for seamless integration
 - Clean error handling
@@ -95,7 +97,7 @@ Example MCP client configuration:
 
 ## MCP Tools
 
-The server provides two main tools:
+The server provides three main tools:
 
 ### 1. decompile-from-path
 
@@ -143,6 +145,30 @@ Example request:
 }
 ```
 
+### 3. decompile-from-jar
+
+Decompiles a Java class from a JAR file.
+
+Parameters:
+- `jarFilePath`: Absolute path to the JAR file (required)
+- `className`: Fully qualified class name to extract from the JAR (required) (e.g., "com.example.MyClass")
+
+Example request:
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "3",
+  "method": "mcp.tool.execute",
+  "params": {
+    "tool": "decompile-from-jar",
+    "args": {
+      "jarFilePath": "/path/to/example.jar",
+      "className": "com.example.MyClass"
+    }
+  }
+}
+```
+
 ## Known Issues
 
 ### MCP SDK Compatibility
@@ -156,11 +182,13 @@ The CFR decompiler (@run-slicer/cfr) is a JavaScript port of the popular CFR Jav
 1. Standard Java class files
 2. Classes that are part of a known package structure
 3. Modern Java features (up through Java 14)
+4. JAR files containing Java classes
 
 If you encounter issues with a specific class file, try:
 - Using the `decompile-from-package` tool with explicit classpath
+- Using the `decompile-from-jar` tool with explicit class name
 - Ensuring the class file is a valid Java bytecode file
-- Checking for corrupt class files
+- Checking for corrupt class files or JAR archives
 
 
 ## Configuration
@@ -206,9 +234,14 @@ This is especially useful for debugging and understanding the MCP server's capab
 
 1. The server uses the CFR decompiler (@run-slicer/cfr - a JavaScript port of the popular CFR Java decompiler)
 2. When a decompile request is received, the server:
-   - Reads the class file data
+   - Reads the class file data directly or extracts it from a JAR file
    - Processes the class file with CFR decompiler
    - Returns the formatted source code
+3. For JAR files, the server:
+   - Creates a temporary directory for extraction
+   - Extracts the JAR contents
+   - Decompiles the specified class (or first class if none specified)
+   - Cleans up the temporary directory
 
 ## License
 

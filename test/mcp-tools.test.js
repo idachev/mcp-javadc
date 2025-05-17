@@ -7,6 +7,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 
 const FIXTURES_DIR = path.join(process.cwd(), 'test', 'fixtures');
 const TEST_CLASS_PATH = path.join(FIXTURES_DIR, 'SampleClass.class');
+const TEST_JAR_PATH = path.join(FIXTURES_DIR, 'SampleClass.jar');
 
 async function runTests() {
   console.log('Starting MCP Java Decompiler tests with MCP client...');
@@ -32,11 +33,12 @@ async function runTests() {
     
     assert(toolsResponse && toolsResponse.tools, 'Expected tools array in response');
     assert(Array.isArray(toolsResponse.tools), 'Expected tools to be an array');
-    assert(toolsResponse.tools.length === 2, 'Expected 2 tools to be listed');
+    assert(toolsResponse.tools.length === 3, 'Expected 3 tools to be listed');
     
     const toolNames = toolsResponse.tools.map(tool => tool.name);
     assert(toolNames.includes('decompile-from-path'), 'Expected decompile-from-path tool');
     assert(toolNames.includes('decompile-from-package'), 'Expected decompile-from-package tool');
+    assert(toolNames.includes('decompile-from-jar'), 'Expected decompile-from-jar tool');
     
     console.log('✓ Successfully listed tools:', toolNames);
     
@@ -44,8 +46,9 @@ async function runTests() {
     
     try {
       await fs.access(TEST_CLASS_PATH);
+      await fs.access(TEST_JAR_PATH);
     } catch (e) {
-      console.log('Test class file not found, running create-test-fixtures...');
+      console.log('Test fixtures not found, running create-test-fixtures...');
       const { createFixtures } = await import('./create-test-fixtures.js');
       await createFixtures();
     }
@@ -94,7 +97,52 @@ async function runTests() {
       console.log('✓ Expected error when decompiling from package:', error.message);
     }
     
-    console.log('\nTest 4: Testing error handling for invalid path...');
+    console.log('\nTest 4: Testing decompile-from-jar tool...');
+    
+    try {
+      const decompileJarResponse = await client.callTool({
+        name: 'decompile-from-jar',
+        arguments: {
+          jarFilePath: TEST_JAR_PATH,
+          className: 'SampleClass'
+        },
+      });
+      
+      console.log('Decompile jar response received:', 
+        decompileJarResponse ? 'Success' : 'Error');
+      
+      assert(decompileJarResponse && decompileJarResponse.content, 
+        'Expected content in response');
+        
+      const jarText = decompileJarResponse.content[0]?.text || '';
+      assert(jarText.includes('class SampleClass'), 'Expected decompiled class in result');
+      assert(jarText.includes('void printMessage()'), 'Expected method in decompiled class');
+      console.log('✓ Successfully decompiled from JAR with explicit class name');
+      
+      // Test for missing className (should error)
+      const decompileJarMissingClassResponse = await client.callTool({
+        name: 'decompile-from-jar',
+        arguments: {
+          jarFilePath: TEST_JAR_PATH
+        },
+      });
+      
+      console.log('Decompile jar (missing className) response received:', 
+        decompileJarMissingClassResponse ? 'Success' : 'Error');
+      
+      assert(decompileJarMissingClassResponse && decompileJarMissingClassResponse.content, 
+        'Expected content in response');
+        
+      const missingClassText = decompileJarMissingClassResponse.content[0]?.text || '';
+      assert(missingClassText.includes('Error:'), 'Expected error message for missing className');
+      console.log('✓ Successfully returned error for missing className');
+      
+    } catch (error) {
+      console.error('Failed to decompile from JAR:', error);
+      throw error;
+    }
+    
+    console.log('\nTest 5: Testing error handling for invalid path...');
     
     const invalidPathResponse = await client.callTool({
       name: 'decompile-from-path',

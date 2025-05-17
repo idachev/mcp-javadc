@@ -9,9 +9,10 @@ This project is a Model Context Protocol (MCP) server that provides Java decompi
 ## Key Features
 
 - Uses the Model Context Protocol (MCP) to provide a standardized API
-- Provides tools to decompile Java class files from file paths or package names
+- Provides tools to decompile Java class files from file paths, package names, or JAR files
 - Uses stdio transport for seamless integration with MCP clients
 - Implements proper error handling and temporary file management
+- Supports extracting specific classes from JAR files
 
 ## Project Structure
 
@@ -37,7 +38,7 @@ npm start
 
 ## MCP Tools
 
-The server provides two tools:
+The server provides three tools:
 
 1. `decompile-from-path`: Decompiles a Java class file from a file path
    - Input: `classFilePath` (absolute path to the .class file)
@@ -45,6 +46,10 @@ The server provides two tools:
 2. `decompile-from-package`: Decompiles a Java class from a package name
    - Input: `packageName` (fully qualified Java package and class name)
    - Input (optional): `classpath` (array of classpath directories to search)
+   
+3. `decompile-from-jar`: Decompiles a Java class from a JAR file
+   - Input: `jarFilePath` (absolute path to the JAR file)
+   - Input: `className` (fully qualified class name to extract from the JAR)
 
 ## Technology Stack
 
@@ -67,8 +72,9 @@ The server uses the official MCP SDK to provide proper protocol handling:
 
 Potential enhancements to consider:
 
-- Add unit tests and integration tests
-- Support for decompiling entire JAR files
+- Add more comprehensive unit tests and integration tests
+- Support for listing all classes within a JAR file
+- Support for decompiling multiple classes from a JAR in a single request
 - Implement caching of decompiled results
 - Add more configuration options (decompiler settings)
 - Create a Docker container for easier deployment
@@ -98,6 +104,8 @@ Common issues:
 
 - If CFR fails to decompile, ensure the class file is valid and readable
 - Check CLASSPATH environment variable when using package-based decompilation
+- When using JAR decompilation, make sure the JAR file is not corrupted
+- When using className with JAR decompilation, make sure the class exists in the JAR
 - Ensure temporary directories are properly cleaned up
-- Verify the input class file exists and is accessible
+- Verify all input files exist and are accessible
 - If you encounter "Method not found" errors from Claude, ensure protocol handlers are properly registered

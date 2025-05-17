@@ -1,6 +1,6 @@
 {
   "name": "@idachev/mcp-javadc",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "Model Context Protocol (MCP) server for Java decompilation",
   "main": "index.js",
   "type": "module",

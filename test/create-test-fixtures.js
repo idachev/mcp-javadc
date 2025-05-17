@@ -5,6 +5,8 @@ import { execSync } from 'child_process';
 const FIXTURES_DIR = path.join(process.cwd(), 'test', 'fixtures');
 const SAMPLE_JAVA_PATH = path.join(FIXTURES_DIR, 'SampleClass.java');
 const TEST_CLASS_PATH = path.join(FIXTURES_DIR, 'SampleClass.class');
+const TEST_JAR_PATH = path.join(FIXTURES_DIR, 'SampleClass.jar');
+const MANIFEST_PATH = path.join(FIXTURES_DIR, 'MANIFEST.MF');
 
 const SAMPLE_JAVA_CODE = `
 public class SampleClass {
@@ -37,6 +39,10 @@ public class SampleClass {
 }
 `;
 
+const MANIFEST_CONTENT = `Manifest-Version: 1.0
+Main-Class: SampleClass
+`;
+
 function createFixtures() {
   console.log('Creating test fixtures...');
 
@@ -52,6 +58,30 @@ function createFixtures() {
     console.log('Attempting to compile Java file...');
     execSync(`javac -d ${FIXTURES_DIR} ${SAMPLE_JAVA_PATH}`);
     console.log(`Successfully compiled to: ${TEST_CLASS_PATH}`);
+    
+    // Create manifest file
+    fs.writeFileSync(MANIFEST_PATH, MANIFEST_CONTENT);
+    console.log(`Created manifest file: ${MANIFEST_PATH}`);
+    
+    // Create JAR file
+    try {
+      console.log('Creating JAR file...');
+      execSync(`jar cfm ${TEST_JAR_PATH} ${MANIFEST_PATH} -C ${FIXTURES_DIR} SampleClass.class`);
+      console.log(`Successfully created JAR file: ${TEST_JAR_PATH}`);
+    } catch (jarError) {
+      console.error('Could not create JAR file. You may need to install JDK or create it manually.');
+      console.error(`Error: ${jarError.message}`);
+      
+      if (!fs.existsSync(TEST_JAR_PATH)) {
+        // Create a placeholder JAR file
+        fs.writeFileSync(TEST_JAR_PATH, 'PLACEHOLDER_JAR_FILE');
+        console.log(`Created placeholder JAR file: ${TEST_JAR_PATH}`);
+        console.log(
+          'NOTE: This is not a valid JAR file. Tests will run but will likely fail.'
+        );
+      }
+    }
+    
   } catch (error) {
     console.error(
       'Could not compile Java file. You may need to install JDK or compile it manually.'
@@ -64,6 +94,11 @@ function createFixtures() {
       console.log(
         'NOTE: This is not a valid Java class file. Tests will run but will likely fail.'
       );
+    }
+    
+    if (!fs.existsSync(TEST_JAR_PATH)) {
+      fs.writeFileSync(TEST_JAR_PATH, 'PLACEHOLDER_JAR_FILE');
+      console.log(`Created placeholder JAR file: ${TEST_JAR_PATH}`);
     }
   }
 
