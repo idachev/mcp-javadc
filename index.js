@@ -126,9 +126,6 @@ class DecompilerService {
   }
 }
 
-// Schema definitions used in the tool request handlers
-// These are validated through the MCP SDK's request handler mechanism
-
 const decompilerService = new DecompilerService();
 
 const server = new Server(
@@ -280,7 +277,6 @@ decompiles Java bytecode into readable source
   }
 }
 
-// Export objects for testing and MCP SDK integration
 export { server, decompilerService };
 
 if (import.meta.url === `file://${process.argv[1]}`) {
