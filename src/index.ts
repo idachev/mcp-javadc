@@ -12,7 +12,7 @@ import { registerDecompileTools } from './tools/decompileTools.js';
 /**
  * Package version from package.json
  */
-const PACKAGE_VERSION = '1.0.0';
+const PACKAGE_VERSION = '1.1.4';
 
 /**
  * Create and initialize the MCP server
