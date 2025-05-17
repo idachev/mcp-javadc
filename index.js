@@ -3,13 +3,9 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { decompile } from '@run-slicer/cfr';
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
-import { z } from 'zod';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
 const SERVER_NAME = 'javadc';
 const PACKAGE_VERSION = '1.1.5';
@@ -130,16 +126,8 @@ class DecompilerService {
   }
 }
 
-const DecompileFromPathSchema = z.object({
-  classFilePath: z.string().describe('The absolute path to the .class file'),
-});
-
-const DecompileFromPackageSchema = z.object({
-  packageName: z.string().describe('Fully qualified Java package and class name'),
-  classpath: z.array(z.string())
-    .describe('Array of classpath directories to search')
-    .optional(),
-});
+// Schema definitions used in the tool request handlers
+// These are validated through the MCP SDK's request handler mechanism
 
 const decompilerService = new DecompilerService();
 
@@ -162,29 +150,59 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'decompile-from-path',
         description: 'Decompiles a Java .class file from a given file path',
-        parameters_schema: DecompileFromPathSchema,
+        inputSchema: {
+          type: 'object',
+          properties: {
+            classFilePath: {
+              type: 'string',
+              description: 'The absolute path to the .class file',
+            },
+          },
+          required: ['classFilePath'],
+        },
       },
       {
         name: 'decompile-from-package',
         description: 'Decompiles a Java class from a package name',
-        parameters_schema: DecompileFromPackageSchema,
+        inputSchema: {
+          type: 'object',
+          properties: {
+            packageName: {
+              type: 'string',
+              description: 'Fully qualified Java package and class name',
+            },
+            classpath: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Array of classpath directories to search',
+            },
+          },
+          required: ['packageName'],
+        },
       },
     ],
   };
 });
 
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async request => {
   const { tool, args } = request.params;
-  
+
   switch (tool) {
     case 'decompile-from-path': {
       const { classFilePath } = args;
       if (!classFilePath) {
         return {
-          content: [{ type: 'text', text: 'Error: Missing classFilePath parameter' }],
+          content: [
+            {
+              type: 'text',
+              text: 'Error: Missing classFilePath parameter',
+            },
+          ],
         };
       }
-      
+
       try {
         const decompiled = await decompilerService.decompileFromPath(classFilePath);
         return {
@@ -196,15 +214,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
     }
-    
+
     case 'decompile-from-package': {
       const { packageName, classpath = [] } = args;
       if (!packageName) {
         return {
-          content: [{ type: 'text', text: 'Error: Missing packageName parameter' }],
+          content: [
+            {
+              type: 'text',
+              text: 'Error: Missing packageName parameter',
+            },
+          ],
         };
       }
-      
+
       try {
         const decompiled = await decompilerService.decompileFromPackage(packageName, classpath);
         return {
@@ -216,7 +239,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
     }
-    
+
     default:
       return {
         content: [{ type: 'text', text: `Error: Unknown tool ${tool}` }],
@@ -237,7 +260,7 @@ decompiles Java bytecode into readable source
 
     console.error('Starting in stdio mode...');
     console.error('Use this mode when connecting through an MCP client');
-    
+
     const transport = new StdioServerTransport();
     await server.connect(transport);
     console.error('MCP Java Decompiler server running on stdio');
