@@ -20,12 +20,12 @@
     },
     "javadc": {
       "type": "stdio",
-      "command": "node",
+      "command": "npx",
       "args": [
-        "index.js"
+        "-y",
+        "@idachev/mcp-javadc"
       ],
-      "env": {},
-      "cwd": "/home/idachev/develop/personal/mcp-javadc"
+      "env": {}
     }
   }
 }
