@@ -280,7 +280,8 @@ decompiles Java bytecode into readable source
   }
 }
 
-export { server };
+// Export objects for testing and MCP SDK integration
+export { server, decompilerService };
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(error => {

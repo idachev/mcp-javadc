@@ -81,5 +81,10 @@ function createFixtures() {
   console.log('Fixture creation completed.');
 }
 
-// Run the fixture creation
-createFixtures();
+// Export the createFixtures function
+export { createFixtures };
+
+// Run the fixture creation if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  createFixtures();
+}

@@ -15,7 +15,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "node test/mcp-tools.test.js",
+    "test": "node test/decompiler.test.js",
     "test:setup": "node test/create-test-fixtures.js",
     "lint": "eslint index.js",
     "lint:fix": "eslint --fix index.js",
