@@ -1,5 +1,8 @@
 declare module '@modelcontextprotocol/sdk' {
   export interface McpToolParams {
+    classFilePath?: string;
+    packageName?: string;
+    classpath?: string[];
     [key: string]: unknown;
   }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { McpServer } from '@modelcontextprotocol/sdk';
+import { McpServer, McpToolParams } from '@modelcontextprotocol/sdk';
 import { DecompilerService } from '../services/decompiler.js';
 
 /**
@@ -16,9 +16,9 @@ export function registerDecompileTools(server: McpServer) {
     },
     {
       description: 'Decompiles a Java .class file from a given file path',
-      execute: async (params: { classFilePath: string }) => {
+      execute: async (params: McpToolParams) => {
         try {
-          const { classFilePath } = params;
+          const classFilePath = params.classFilePath as string;
           const decompiled = await decompilerService.decompileFromPath(classFilePath);
           return {
             content: [
@@ -59,9 +59,10 @@ export function registerDecompileTools(server: McpServer) {
     },
     {
       description: 'Decompiles a Java class from a package name',
-      execute: async (params: { packageName: string; classpath?: string[] }) => {
+      execute: async (params: McpToolParams) => {
         try {
-          const { packageName, classpath = [] } = params;
+          const packageName = params.packageName as string;
+          const classpath = params.classpath || [];
           const decompiled = await decompilerService.decompileFromPackage(packageName, classpath);
           return {
             content: [
