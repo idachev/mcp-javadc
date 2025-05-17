@@ -1,5 +1,4 @@
 #!/bin/bash
-. "$(dirname "$0")/_/husky.sh"
 
 # Run lint-staged to check for linting issues
 npx lint-staged
