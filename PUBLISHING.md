@@ -1,0 +1,77 @@
+# Publishing to npm
+
+This document contains instructions for publishing the MCP Java Decompiler server to npm.
+
+## Prerequisites
+
+1. Create an npm account at https://www.npmjs.com/signup if you don't have one
+2. Update the package.json with your name, email, and GitHub repository URL
+3. Ensure you've built the package with `npm run build`
+
+## Publishing Process
+
+1. Login to your npm account:
+   ```bash
+   npm login
+   ```
+
+2. For first-time publish with a scoped package:
+   ```bash
+   npm publish --access public
+   ```
+
+   For subsequent updates:
+   ```bash
+   npm publish
+   ```
+
+## Publishing to the @modelcontextprotocol Scope
+
+To publish to the official @modelcontextprotocol scope, you need to:
+
+1. Request access to the @modelcontextprotocol organization on npm
+2. Be added as a maintainer or contributor
+3. Use the organization scope when publishing:
+   ```bash
+   npm publish --access public
+   ```
+
+## Version Updates
+
+When you need to update the package, update the version in package.json following semantic versioning:
+
+- MAJOR: Breaking changes
+- MINOR: New features, no breaking changes
+- PATCH: Bug fixes, no breaking changes
+
+Example:
+```bash
+# Update version and publish
+npm version patch  # or 'minor' or 'major'
+npm publish
+```
+
+## Tags and Releases
+
+Consider creating a GitHub release and tag when publishing a new version:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Then create a GitHub release at https://github.com/yourusername/mcp-javadc/releases/new
+
+## Testing Your Package Before Publishing
+
+You can use `npm pack` to create a local tarball without publishing:
+
+```bash
+npm pack
+```
+
+This creates a `.tgz` file you can install locally for testing:
+
+```bash
+npm install -g ./modelcontextprotocol-server-javadc-1.0.0.tgz
+```

@@ -19,6 +19,30 @@ A Model Context Protocol (MCP) server for decompiling Java class files. This ser
 
 ## Installation
 
+### Option 1: Using npx (Recommended)
+
+You can run the server directly with npx without installing:
+
+```bash
+# Run in stdio mode (for MCP clients)
+npx -y @modelcontextprotocol/server-javadc
+
+# Run in HTTP mode
+npx -y @modelcontextprotocol/server-javadc --http --port 3000
+```
+
+### Option 2: Global Installation
+
+```bash
+# Install globally
+npm install -g @modelcontextprotocol/server-javadc
+
+# Run the server
+mcp-javadc
+```
+
+### Option 3: From Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/mcp-javadc.git
@@ -29,6 +53,9 @@ npm install
 
 # Build the TypeScript project
 npm run build
+
+# Run the server
+npm start
 ```
 
 ## Usage
@@ -72,8 +99,8 @@ Example MCP client configuration:
 {
   "mcpServers": {
     "javaDecompiler": {
-      "command": "node",
-      "args": ["/path/to/mcp-javadc/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-javadc"],
       "env": {
         "CLASSPATH": "/path/to/java/classes"
       }

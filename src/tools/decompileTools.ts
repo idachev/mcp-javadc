@@ -7,12 +7,12 @@ import { DecompilerService } from '../services/decompiler.js';
  */
 export function registerDecompileTools(server: McpServer) {
   const decompilerService = new DecompilerService();
-  
+
   // Tool 1: Decompile from file path
   server.tool(
     'decompile-from-path',
     {
-      classFilePath: z.string().describe('Absolute path to the Java .class file')
+      classFilePath: z.string().describe('Absolute path to the Java .class file'),
     },
     {
       description: 'Decompiles a Java .class file from a given file path',
@@ -24,9 +24,9 @@ export function registerDecompileTools(server: McpServer) {
             content: [
               {
                 type: 'text',
-                text: decompiled
-              }
-            ]
+                text: decompiled,
+              },
+            ],
           };
         } catch (error) {
           if (error instanceof Error) {
@@ -34,27 +34,32 @@ export function registerDecompileTools(server: McpServer) {
               content: [
                 {
                   type: 'text',
-                  text: `Error: ${error.message}`
-                }
-              ]
+                  text: `Error: ${error.message}`,
+                },
+              ],
             };
           }
           throw error;
         }
-      }
+      },
     }
   );
-  
+
   // Tool 2: Decompile from package name
   server.tool(
     'decompile-from-package',
     {
-      packageName: z.string().describe('Fully qualified Java package and class name (e.g. java.util.ArrayList)'),
-      classpath: z.array(z.string()).optional().describe('Optional array of classpath directories to search')
+      packageName: z
+        .string()
+        .describe('Fully qualified Java package and class name (e.g. java.util.ArrayList)'),
+      classpath: z
+        .array(z.string())
+        .optional()
+        .describe('Optional array of classpath directories to search'),
     },
     {
       description: 'Decompiles a Java class from a package name',
-      execute: async (params: { packageName: string, classpath?: string[] }) => {
+      execute: async (params: { packageName: string; classpath?: string[] }) => {
         try {
           const { packageName, classpath = [] } = params;
           const decompiled = await decompilerService.decompileFromPackage(packageName, classpath);
@@ -62,9 +67,9 @@ export function registerDecompileTools(server: McpServer) {
             content: [
               {
                 type: 'text',
-                text: decompiled
-              }
-            ]
+                text: decompiled,
+              },
+            ],
           };
         } catch (error) {
           if (error instanceof Error) {
@@ -72,14 +77,14 @@ export function registerDecompileTools(server: McpServer) {
               content: [
                 {
                   type: 'text',
-                  text: `Error: ${error.message}`
-                }
-              ]
+                  text: `Error: ${error.message}`,
+                },
+              ],
             };
           }
           throw error;
         }
-      }
+      },
     }
   );
 }
