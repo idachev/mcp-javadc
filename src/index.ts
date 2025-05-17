@@ -8,6 +8,7 @@ const { StreamableHTTPServerTransport } = sdk;
 const { StdioServerTransport } = sdk;
 
 import { registerDecompileTools } from './tools/decompileTools.js';
+import { registerProtocolHandlers } from './services/protocolHandlers.js';
 
 /**
  * Package version from package.json
@@ -29,6 +30,9 @@ export async function createServer() {
 
   // Register tools
   registerDecompileTools(server);
+
+  // Register core protocol handlers to ensure compatibility with MCP clients
+  registerProtocolHandlers(server);
 
   return server;
 }
