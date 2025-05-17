@@ -17,8 +17,8 @@
     "build": "tsc",
     "start": "node server.cjs",
     "dev": "ts-node --esm src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test:setup": "node test-script.js",
+    "test": "npm run build && node test/cfr-decompiler.test.js",
+    "test:setup": "node test/create-test-fixtures.js",
     "test:quick": "node quick-test.js",
     "test:cjs": "node test-cjs.cjs",
     "test:direct": "node test-direct.cjs",
@@ -50,8 +50,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.4",
+    "@run-slicer/cfr": "^0.1.3-0.152",
     "express": "^4.18.2",
-    "fernflower": "^1.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

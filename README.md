@@ -15,7 +15,7 @@ A Model Context Protocol (MCP) server for decompiling Java class files. This ser
 
 - Node.js 16+ 
 - npm
-- Java (for the fernflower decompiler to work properly)
+- No Java requirement (using JavaScript port of CFR decompiler)
 
 ## Installation
 
@@ -161,9 +161,28 @@ Example request:
 }
 ```
 
-## Important Note on Using the Package
+## Known Issues
 
-This package requires a specific version of the MCP SDK and direct import paths. When importing in your own projects or running with npx, you may need to use direct paths to the SDK components:
+### MCP SDK Compatibility
+
+This package includes a custom CommonJS implementation to avoid issues with the MCP SDK's export structure. When the package is installed via npm and used with npx, it will use this more compatible implementation.
+
+### Java Class Decompilation
+
+The CFR decompiler (@run-slicer/cfr) is a JavaScript port of the popular CFR Java decompiler. It works well with:
+
+1. Standard Java class files
+2. Classes that are part of a known package structure
+3. Modern Java features (up through Java 14)
+
+If you encounter issues with a specific class file, try:
+- Using the `decompile-from-package` tool with explicit classpath
+- Ensuring the class file is a valid Java bytecode file
+- Checking for corrupt class files
+
+### MCP SDK Integration
+
+When importing directly in TypeScript/JavaScript projects, you may need to use direct paths to the SDK components:
 
 ```javascript
 // Instead of
@@ -191,19 +210,20 @@ This is due to the package export structure of the SDK.
 # Run in development mode (with ts-node)
 npm run dev
 
-# Run tests (when implemented)
+# Create test fixtures (creates sample Java class for testing)
+npm run test:setup
+
+# Run tests 
 npm test
 ```
 
 ## How It Works
 
-1. The server uses the fernflower decompiler (a Node.js wrapper around the Java fernflower decompiler)
+1. The server uses the CFR decompiler (@run-slicer/cfr - a JavaScript port of the popular CFR Java decompiler)
 2. When a decompile request is received, the server:
-   - Creates a temporary directory
-   - Processes the class file with fernflower
-   - Reads the decompiled Java source
+   - Reads the class file data
+   - Processes the class file with CFR decompiler
    - Returns the formatted source code
-   - Cleans up temporary files
 
 ## License
 

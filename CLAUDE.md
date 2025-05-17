@@ -16,7 +16,7 @@ This project is a Model Context Protocol (MCP) server that provides Java decompi
 ## Project Structure
 
 - `src/index.ts`: Main server entry point that sets up MCP server and transport
-- `src/services/decompiler.ts`: Core decompiler service that interacts with fernflower
+- `src/services/decompiler.ts`: Core decompiler service that interacts with CFR decompiler
 - `src/tools/decompileTools.ts`: MCP tool definitions for decompilation operations
 - `src/types/modelcontextprotocol.d.ts`: TypeScript definitions for MCP SDK
 
@@ -57,7 +57,7 @@ The server provides two tools:
 - TypeScript
 - Node.js
 - Express (for HTTP transport)
-- fernflower (Node.js wrapper for Java decompiler)
+- CFR (@run-slicer/cfr - JavaScript port of the CFR Java decompiler)
 - Model Context Protocol (MCP) SDK
 - Zod (for parameter validation)
 
@@ -93,7 +93,7 @@ The MCP server uses the following structure:
 
 Common issues:
 
-- If fernflower fails to decompile, ensure Java is properly installed
+- If CFR fails to decompile, ensure the class file is valid and readable
 - Check CLASSPATH environment variable when using package-based decompilation
 - Ensure temporary directories are properly cleaned up
 - Verify the input class file exists and is accessible

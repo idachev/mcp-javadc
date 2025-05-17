@@ -1,12 +1,8 @@
-import { promisify } from 'util';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as crypto from 'crypto';
-import fernflowerModule from 'fernflower';
-
-// Import fernflower module
-const fernflower = promisify(fernflowerModule);
+import { decompile } from '@run-slicer/cfr';
 
 /**
  * Service for decompiling Java .class files
@@ -23,24 +19,38 @@ export class DecompilerService {
       // Check if file exists
       await fs.access(classFilePath);
 
-      // Create temp output directory
-      const tempDir = await this.createTempDir();
+      // Read the class file
+      const classData = await fs.readFile(classFilePath);
+      
+      // Get class name and internal name
+      const className = path.basename(classFilePath, '.class');
+      const packagePath = path.dirname(classFilePath);
+      // Convert file path to package format (approximate)
+      const internalName = this.getInternalNameFromPath(classFilePath);
 
-      try {
-        // Run decompiler
-        await fernflower(classFilePath, tempDir);
+      // Use CFR to decompile
+      const decompiled = await decompile(internalName, {
+        source: async (name: string) => {
+          if (name === internalName) {
+            return classData;
+          }
+          
+          // For basic Java language classes, return an empty Buffer
+          // This prevents "Could not load the following classes" warnings
+          if (name.startsWith('java/lang/')) {
+            return Buffer.from([]);
+          }
+          
+          return null; // No other supporting classes provided
+        },
+        options: {
+          // CFR options can be configured here
+          "hidelangimports": "true",
+          "showversion": "false"
+        }
+      });
 
-        // Get the decompiled file (should be .java file with same name as class)
-        const className = path.basename(classFilePath, '.class');
-        const javaFilePath = path.join(tempDir, `${className}.java`);
-
-        // Read decompiled source
-        const sourceCode = await fs.readFile(javaFilePath, 'utf-8');
-        return sourceCode;
-      } finally {
-        // Cleanup temp directory
-        await this.cleanupTempDir(tempDir);
-      }
+      return decompiled;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Failed to decompile class file: ${error.message}`);
@@ -64,8 +74,35 @@ export class DecompilerService {
         throw new Error(`Could not find class file for package: ${packageName}`);
       }
 
-      // Decompile the found class file
-      return await this.decompileFromPath(classFilePath);
+      // Get internal package name for CFR (replace dots with slashes)
+      const internalName = packageName.replace(/\./g, '/');
+      
+      // Read the class file
+      const classData = await fs.readFile(classFilePath);
+      
+      // Use CFR to decompile
+      const decompiled = await decompile(internalName, {
+        source: async (name: string) => {
+          if (name === internalName) {
+            return classData;
+          }
+          
+          // For basic Java language classes, return an empty Buffer
+          // This prevents "Could not load the following classes" warnings
+          if (name.startsWith('java/lang/')) {
+            return Buffer.from([]);
+          }
+          
+          return null; // No other supporting classes provided
+        },
+        options: {
+          // CFR options can be configured here
+          "hidelangimports": "true",
+          "showversion": "false"
+        }
+      });
+
+      return decompiled;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Failed to decompile package: ${error.message}`);
@@ -111,22 +148,46 @@ export class DecompilerService {
   }
 
   /**
-   * Create a temporary directory for decompiled files
+   * Attempts to convert a file path to a Java internal name format
+   * Example: /path/to/com/example/MyClass.class -> com/example/MyClass
    */
-  private async createTempDir(): Promise<string> {
-    const tempDir = path.join(os.tmpdir(), `javadc-${crypto.randomBytes(8).toString('hex')}`);
-    await fs.mkdir(tempDir, { recursive: true });
-    return tempDir;
-  }
-
-  /**
-   * Clean up a temporary directory
-   */
-  private async cleanupTempDir(tempDir: string): Promise<void> {
-    try {
-      await fs.rm(tempDir, { recursive: true, force: true });
-    } catch (error) {
-      console.error('Failed to clean up temporary directory:', error);
+  private getInternalNameFromPath(classFilePath: string): string {
+    // Get the filename without extension
+    const className = path.basename(classFilePath, '.class');
+    
+    // Attempt to find package structure in path
+    const pathParts = classFilePath.split(path.sep);
+    const classNameIndex = pathParts.findIndex(part => part === className + '.class');
+    
+    if (classNameIndex <= 0) {
+      // If we can't determine package structure, just return the class name
+      return className;
     }
+    
+    // Look backward to find potential package parts
+    // This is a heuristic and may not always be correct
+    let packageParts: string[] = [];
+    let i = classNameIndex - 1;
+    
+    // This logic attempts to identify package parts by looking for lowercase directory names
+    // This is an imperfect heuristic but better than nothing
+    while (i >= 0) {
+      const part = pathParts[i];
+      // Common Java package naming patterns (lowercase, may contain dots)
+      if (/^[a-z][a-z0-9_.]*$/.test(part)) {
+        packageParts.unshift(part);
+      } else {
+        // Once we hit something that doesn't look like a package part, stop
+        break;
+      }
+      i--;
+    }
+    
+    // Combine package parts with the class name
+    if (packageParts.length > 0) {
+      return packageParts.join('/') + '/' + className;
+    }
+    
+    return className;
   }
 }
