@@ -18,11 +18,12 @@ const os = require('os');
 // Simple decompiler service
 class DecompilerService {
   constructor() {
-    // Load fernflower
+    // Load CFR decompiler
     try {
-      this.fernflower = promisify(require('fernflower'));
+      // @run-slicer/cfr is already a dependency in package.json
+      this.cfr = require('@run-slicer/cfr');
     } catch (error) {
-      console.error('Failed to load fernflower:', error.message);
+      console.error('Failed to load @run-slicer/cfr decompiler:', error.message);
       process.exit(1);
     }
   }
@@ -36,15 +37,10 @@ class DecompilerService {
       const tempDir = await this.createTempDir();
       
       try {
-        // Run decompiler
-        await this.fernflower(classFilePath, tempDir);
+        // Run CFR decompiler
+        const sourceCode = await this.cfr.decompile(classFilePath);
         
-        // Get the decompiled file (should be .java file with same name as class)
-        const className = path.basename(classFilePath, '.class');
-        const javaFilePath = path.join(tempDir, `${className}.java`);
-        
-        // Read decompiled source
-        const sourceCode = await fs.promises.readFile(javaFilePath, 'utf-8');
+        // CFR returns the source code directly
         return sourceCode;
       } finally {
         // Cleanup temp directory
