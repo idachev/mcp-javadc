@@ -17,6 +17,7 @@ This project is a Model Context Protocol (MCP) server that provides Java decompi
 
 - `src/index.ts`: Main server entry point that sets up MCP server and transport
 - `src/services/decompiler.ts`: Core decompiler service that interacts with CFR decompiler
+- `src/services/protocolHandlers.ts`: Registers MCP protocol method handlers
 - `src/tools/decompileTools.ts`: MCP tool definitions for decompilation operations
 - `src/types/modelcontextprotocol.d.ts`: TypeScript definitions for MCP SDK
 
@@ -86,8 +87,18 @@ The MCP server uses the following structure:
 
 - Setup a McpServer with name and version
 - Register tools with name, parameters schema, and execute function
+- Register core protocol handlers for compatibility with clients
 - Connect server to transport (HTTP or stdio)
 - Return properly formatted responses with content array
+
+### Important Protocol Handler Registration
+
+The server explicitly registers handlers for core MCP protocol methods:
+
+1. `mcp.tool.list`: Returns available tools and their parameters
+2. `mcp.tool.execute`: Handles tool execution requests
+
+These registrations are essential for compatibility with Claude and other MCP clients and are implemented in `src/services/protocolHandlers.ts`.
 
 ## Troubleshooting
 
@@ -97,3 +108,4 @@ Common issues:
 - Check CLASSPATH environment variable when using package-based decompilation
 - Ensure temporary directories are properly cleaned up
 - Verify the input class file exists and is accessible
+- If you encounter "Method not found" errors from Claude, ensure protocol handlers are properly registered
