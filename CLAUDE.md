@@ -10,7 +10,7 @@ This project is a Model Context Protocol (MCP) server that provides Java decompi
 
 - Uses the Model Context Protocol (MCP) to provide a standardized API
 - Provides tools to decompile Java class files from file paths or package names
-- Supports both HTTP and stdio transports for flexible integration
+- Uses stdio transport for seamless integration with MCP clients
 - Implements proper error handling and temporary file management
 
 ## Project Structure
@@ -29,11 +29,11 @@ npm install
 # Run in development mode
 npm run dev
 
-# Run in HTTP mode
-PORT=3000 MCP_USE_HTTP=true npm start
+# Run using the start script
+npm start
 
 # Use helper script
-./run.sh --http --port 3000
+./run.sh
 ```
 
 ## MCP Tools
@@ -51,10 +51,18 @@ The server provides two tools:
 
 - JavaScript (ES Modules)
 - Node.js
-- Express (for HTTP transport)
 - CFR (@run-slicer/cfr - JavaScript port of the CFR Java decompiler)
-- Model Context Protocol (MCP) SDK
+- Model Context Protocol (MCP) SDK (@modelcontextprotocol/sdk)
 - Zod (for parameter validation)
+
+## Implementation Details
+
+The server uses the official MCP SDK to provide proper protocol handling:
+
+- Uses `Server` from the MCP SDK for core functionality
+- Registers tool handlers with parameter schemas
+- Implements proper response formatting
+- Uses `StdioServerTransport` for standard input/output communication
 
 ## Future Improvements
 
@@ -62,7 +70,6 @@ Potential enhancements to consider:
 
 - Add unit tests and integration tests
 - Support for decompiling entire JAR files
-- Add authentication for HTTP transport
 - Implement caching of decompiled results
 - Add more configuration options (decompiler settings)
 - Create a Docker container for easier deployment
@@ -71,18 +78,18 @@ Potential enhancements to consider:
 
 The MCP server uses the following structure:
 
-- Setup a McpServer with name and version
+- Setup a Server with name and version
 - Register tools with name, parameters schema, and execute function
 - Register core protocol handlers for compatibility with clients
-- Connect server to transport (HTTP or stdio)
+- Connect server to stdio transport
 - Return properly formatted responses with content array
 
 ### Important Protocol Handler Registration
 
-The server explicitly registers handlers for core MCP protocol methods:
+The server uses the official MCP SDK to properly register protocol handlers:
 
-1. `mcp.tool.list`: Returns available tools and their parameters
-2. `mcp.tool.execute`: Handles tool execution requests
+1. `ListToolsRequestSchema`: Handles the `mcp.tool.list` method and returns available tools with their parameter schemas
+2. `CallToolRequestSchema`: Handles the `mcp.tool.execute` method to execute tools with proper validation
 
 These registrations are essential for compatibility with Claude and other MCP clients.
 
