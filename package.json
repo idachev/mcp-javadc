@@ -1,6 +1,6 @@
 {
   "name": "@idachev/mcp-javadc",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Model Context Protocol (MCP) server for Java decompilation",
   "main": "dist/index.js",
   "type": "module",
@@ -68,6 +68,9 @@
     "typescript": "^5.3.3"
   },
   "lint-staged": {
-    "src/**/*.ts": ["eslint --fix", "prettier --write"]
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
