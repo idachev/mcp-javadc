@@ -7,7 +7,7 @@ A Model Context Protocol (MCP) server for decompiling Java class files. This ser
 - Decompile Java .class files from file path
 - Decompile Java classes from package name (e.g., java.util.ArrayList)
 - Full MCP-compatible API
-- Support for both HTTP and stdio transports
+- Stdio transport for seamless integration
 - Clean error handling
 - Temporary file management
 
@@ -24,11 +24,8 @@ A Model Context Protocol (MCP) server for decompiling Java class files. This ser
 You can run the server directly with npx without installing:
 
 ```bash
-# Run in stdio mode (for MCP clients)
+# Run the server
 npx -y @idachev/mcp-javadc
-
-# Run in HTTP mode
-npx -y @idachev/mcp-javadc --http --port 3000
 ```
 
 Note: The server provides a compatible CommonJS implementation to ensure broad compatibility with different Node.js environments.
@@ -68,23 +65,9 @@ The easiest way to run the server:
 
 ```bash
 # Run with the provided script
-./run.sh 
-
-# For HTTP mode
-./run.sh --http --port 3000
+./run.sh
 ```
 
-### Running as HTTP Server
-
-```bash
-# Start with HTTP transport
-PORT=3000 MCP_USE_HTTP=true npm start
-
-# Or use the development version
-PORT=3000 MCP_USE_HTTP=true npm run dev
-```
-
-The server will be available at `http://localhost:3000/mcp`.
 
 ### Integrating with MCP Clients
 
@@ -185,14 +168,12 @@ If you encounter issues with a specific class file, try:
 
 ### Environment Variables
 
-- `PORT`: HTTP port number (default: 3000)
-- `MCP_USE_HTTP`: Set to "true" to use HTTP transport instead of stdio
 - `CLASSPATH`: Java classpath for finding class files (used when no classpath is specified)
 
 ## Development
 
 ```bash
-# Run in development mode (with ts-node)
+# Run in development mode
 npm run dev
 
 # Create test fixtures (creates sample Java class for testing)
@@ -200,7 +181,27 @@ npm run test:setup
 
 # Run tests 
 npm test
+
+# Run MCP client tests
+npm run test:mcp
 ```
+
+## Testing with MCP Inspector
+
+You can use the official MCP Inspector tool to test the server functionality interactively:
+
+```bash
+# Install and run the MCP Inspector with the decompiler server
+npx @modelcontextprotocol/inspector node ./index.js
+```
+
+The Inspector provides a user-friendly web interface that allows you to:
+- List all available tools
+- Execute the decompilation tools with custom parameters
+- View and explore the decompiled output
+- Test different inputs and error scenarios
+
+This is especially useful for debugging and understanding the MCP server's capabilities before integrating it with other applications.
 
 ## How It Works
 
