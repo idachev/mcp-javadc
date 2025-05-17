@@ -31,6 +31,8 @@ npx -y @modelcontextprotocol/server-javadc
 npx -y @modelcontextprotocol/server-javadc --http --port 3000
 ```
 
+Note: The server provides a compatible CommonJS implementation to ensure broad compatibility with different Node.js environments.
+
 ### Option 2: Global Installation
 
 ```bash

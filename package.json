@@ -5,25 +5,28 @@
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "mcp-javadc": "dist/cli.js"
+    "mcp-javadc": "server.cjs"
   },
   "files": [
     "dist",
+    "server.cjs",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node server.cjs",
     "dev": "ts-node --esm src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:setup": "node test-script.js",
     "test:quick": "node quick-test.js",
-    "start:http": "PORT=3000 MCP_USE_HTTP=true node dist/index.js",
+    "test:cjs": "node test-cjs.cjs",
+    "test:direct": "node test-direct.cjs",
+    "start:http": "node server.cjs --http --port 3000",
     "lint": "eslint 'src/**/*.ts'",
     "lint:fix": "eslint --fix 'src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
-    "prepublishOnly": "npm run lint && npm run build"
+    "prepublishOnly": "npm run lint"
   },
   "keywords": [
     "mcp",
