@@ -6,7 +6,8 @@ This document contains instructions for publishing the MCP Java Decompiler serve
 
 1. Create an npm account at https://www.npmjs.com/signup if you don't have one
 2. Update the package.json with your name, email, and GitHub repository URL
-3. Ensure you've built the package with `npm run build`
+3. Ensure all tests pass with `npm test`
+4. Ensure linting passes with `npm run lint`
 
 ## Publishing Process
 
@@ -60,7 +61,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-Then create a GitHub release at https://github.com/yourusername/mcp-javadc/releases/new
+Then create a GitHub release at https://github.com/idachev/mcp-javadc/releases/new
 
 ## Testing Your Package Before Publishing
 
@@ -73,5 +74,5 @@ npm pack
 This creates a `.tgz` file you can install locally for testing:
 
 ```bash
-npm install -g ./modelcontextprotocol-server-javadc-1.0.0.tgz
+npm install -g ./idachev-mcp-javadc-1.2.3.tgz
 ```
