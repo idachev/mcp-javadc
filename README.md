@@ -1,4 +1,4 @@
-# MCP Java Decompiler Server (v1.2.3)
+# MCP Java Decompiler Server (v1.2.4)
 
 A Model Context Protocol (MCP) server for decompiling Java class files. This server allows AI assistants and tools that implement the MCP protocol to decompile Java bytecode into readable source code.
 
@@ -72,6 +72,14 @@ To use with an MCP client (like Claude or another MCP-compatible AI assistant):
 ```bash
 # Configure the MCP client to use this server
 npx some-mcp-client --server "node /path/to/mcp-javadc/index.js"
+```
+
+### Adding to Claude Code
+
+To add this tool to Claude Code:
+
+```bash
+claude mcp add javadc -s project -- npx -y @idachev/mcp-javadc
 ```
 
 Example MCP client configuration:

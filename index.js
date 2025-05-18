@@ -11,7 +11,7 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 
 const SERVER_NAME = 'javadc';
-const PACKAGE_VERSION = '1.2.3';
+const PACKAGE_VERSION = '1.2.4';
 
 class DecompilerService {
   async decompileFromPath(classFilePath) {
