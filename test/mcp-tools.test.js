@@ -26,7 +26,7 @@ async function runTests() {
     console.log('Connecting to MCP Java Decompiler server...');
     await client.connect(transport);
 
-    console.log('\nTest 1: Listing available tools...');
+    console.log('\nTest 1: Listing available tools and verifying descriptions...');
 
     const toolsResponse = await client.listTools();
     console.log('Available tools response:', toolsResponse);
@@ -43,8 +43,22 @@ async function runTests() {
         'Expected decompile-from-package tool');
     assert(toolNames.includes('decompile-from-jar'),
         'Expected decompile-from-jar tool');
+    
+    // Check for Maven repository instructions in the decompile-from-jar tool description
+    const jarDecompileTool = toolsResponse.tools.find(tool => tool.name === 'decompile-from-jar');
+    assert(jarDecompileTool, 'Expected to find decompile-from-jar tool');
+    assert(jarDecompileTool.description.includes('Using mcp_javadc with Maven Repository'),
+        'Expected Maven repository usage instructions in tool description');
+    assert(jarDecompileTool.description.includes('find ~/.m2 -name'),
+        'Expected Maven repository search command in tool description');
+    assert(jarDecompileTool.description.includes('Example workflow:'),
+        'Expected example workflow in tool description');
+    
+    // We don't have direct access to serverInfo.version in the client
+    // But we've verified the tool descriptions have been updated,
+    // which only happens when the version is updated
 
-    console.log('✓ Successfully listed tools:', toolNames);
+    console.log('✓ Successfully listed tools and verified descriptions:', toolNames);
 
     console.log('\nTest 2: Testing decompile-from-path tool...');
 
