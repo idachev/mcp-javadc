@@ -1,4 +1,4 @@
-# MCP Java Decompiler Server
+# MCP Java Decompiler Server (v1.2.3)
 
 A Model Context Protocol (MCP) server for decompiling Java class files. This server allows AI assistants and tools that implement the MCP protocol to decompile Java bytecode into readable source code.
 
@@ -45,14 +45,11 @@ mcpjavadc
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/mcp-javadc.git
+git clone https://github.com/idachev/mcp-javadc.git
 cd mcp-javadc
 
 # Install dependencies
 npm install
-
-# Build the TypeScript project
-npm run build
 
 # Run the server
 npm start
@@ -74,7 +71,7 @@ To use with an MCP client (like Claude or another MCP-compatible AI assistant):
 
 ```bash
 # Configure the MCP client to use this server
-npx some-mcp-client --server "node /path/to/mcp-javadc/dist/index.js"
+npx some-mcp-client --server "node /path/to/mcp-javadc/index.js"
 ```
 
 Example MCP client configuration:
@@ -169,10 +166,6 @@ Example request:
 
 ## Known Issues
 
-### MCP SDK Compatibility
-
-This package includes a custom CommonJS implementation to avoid issues with the MCP SDK's export structure. When the package is installed via npm and used with npx, it will use this more compatible implementation.
-
 ### Java Class Decompilation
 
 The CFR decompiler (@run-slicer/cfr) is a JavaScript port of the popular CFR Java decompiler. It works well with:
@@ -187,6 +180,14 @@ If you encounter issues with a specific class file, try:
 - Using the `decompile-from-jar` tool with explicit class name
 - Ensuring the class file is a valid Java bytecode file
 - Checking for corrupt class files or JAR archives
+
+### Maven Repository Usage
+
+When working with JAR files from Maven repositories:
+- Use the `find ~/.m2 -name "*dependency-name*jar"` command to locate JAR files
+- Filter out source and javadoc JARs using `grep -v source | grep -v javadoc`
+- Use `jar tf your-jar-file.jar | grep .class` to list available classes in a JAR
+- Check that class names match the package structure in the JAR
 
 
 ## Configuration
@@ -207,8 +208,17 @@ npm run test:setup
 # Run tests 
 npm test
 
-# Run MCP client tests
-npm run test:mcp
+# Run linting
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Format code
+npm run format
+
+# Run with MCP Inspector for interactive testing
+npx @modelcontextprotocol/inspector node ./index.js
 ```
 
 ## Testing with MCP Inspector
