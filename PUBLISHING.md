@@ -26,16 +26,6 @@ This document contains instructions for publishing the MCP Java Decompiler serve
    npm publish
    ```
 
-## Publishing to the @modelcontextprotocol Scope
-
-To publish to the official @modelcontextprotocol scope, you need to:
-
-1. Request access to the @modelcontextprotocol organization on npm
-2. Be added as a maintainer or contributor
-3. Use the organization scope when publishing:
-   ```bash
-   npm publish --access public
-   ```
 
 ## Version Updates
 
