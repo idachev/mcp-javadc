@@ -11,7 +11,7 @@ import { promisify } from 'util';
 import { exec } from 'child_process';
 
 const SERVER_NAME = 'javadc';
-const PACKAGE_VERSION = '1.2.1';
+const PACKAGE_VERSION = '1.2.2';
 
 class DecompilerService {
   async decompileFromPath(classFilePath) {
@@ -396,7 +396,7 @@ async function main() {
   try {
     console.error(`
 ---------------------------------------------
-MCP Java Decompiler Server
+MCP Java Decompiler Server v${PACKAGE_VERSION}
 ---------------------------------------------
 Model Context Protocol (MCP) server that
 decompiles Java bytecode into readable source
@@ -407,7 +407,9 @@ decompiles Java bytecode into readable source
     console.error('Use this mode when connecting through an MCP client');
 
     const transport = new StdioServerTransport();
+
     await server.connect(transport);
+
     console.error('MCP Java Decompiler server running on stdio');
 
     process.on('SIGINT', () => {
@@ -425,11 +427,7 @@ decompiles Java bytecode into readable source
   }
 }
 
-export { server, decompilerService };
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
-    console.error('Fatal error:', error);
-    process.exit(1);
-  });
-}
+main().catch(error => {
+  console.error('Fatal error:', error);
+  process.exit(1);
+});

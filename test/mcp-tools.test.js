@@ -1,9 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { spawn } from 'child_process';
+import {spawn} from 'child_process';
 import assert from 'assert';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import {Client} from '@modelcontextprotocol/sdk/client/index.js';
+import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const FIXTURES_DIR = path.join(process.cwd(), 'test', 'fixtures');
 const TEST_CLASS_PATH = path.join(FIXTURES_DIR, 'SampleClass.class');
@@ -31,14 +31,18 @@ async function runTests() {
     const toolsResponse = await client.listTools();
     console.log('Available tools response:', toolsResponse);
 
-    assert(toolsResponse && toolsResponse.tools, 'Expected tools array in response');
+    assert(toolsResponse && toolsResponse.tools,
+        'Expected tools array in response');
     assert(Array.isArray(toolsResponse.tools), 'Expected tools to be an array');
     assert(toolsResponse.tools.length === 3, 'Expected 3 tools to be listed');
 
     const toolNames = toolsResponse.tools.map(tool => tool.name);
-    assert(toolNames.includes('decompile-from-path'), 'Expected decompile-from-path tool');
-    assert(toolNames.includes('decompile-from-package'), 'Expected decompile-from-package tool');
-    assert(toolNames.includes('decompile-from-jar'), 'Expected decompile-from-jar tool');
+    assert(toolNames.includes('decompile-from-path'),
+        'Expected decompile-from-path tool');
+    assert(toolNames.includes('decompile-from-package'),
+        'Expected decompile-from-package tool');
+    assert(toolNames.includes('decompile-from-jar'),
+        'Expected decompile-from-jar tool');
 
     console.log('✓ Successfully listed tools:', toolNames);
 
@@ -49,7 +53,7 @@ async function runTests() {
       await fs.access(TEST_JAR_PATH);
     } catch (e) {
       console.log('Test fixtures not found, running create-test-fixtures...');
-      const { createFixtures } = await import('./create-test-fixtures.js');
+      const {createFixtures} = await import('./create-test-fixtures.js');
       await createFixtures();
     }
 
@@ -60,16 +64,17 @@ async function runTests() {
       },
     });
 
-    console.log('Decompile path response received:', decompilePathResponse ? 'Success' : 'Error');
+    console.log('Decompile path response received:',
+        decompilePathResponse ? 'Success' : 'Error');
 
     assert(decompilePathResponse && decompilePathResponse.content,
-      'Expected content in response');
+        'Expected content in response');
 
     const decompileText = decompilePathResponse.content[0]?.text || '';
     assert(decompileText.includes('class SampleClass'),
-      'Expected decompiled class in result');
+        'Expected decompiled class in result');
     assert(decompileText.includes('void printMessage()'),
-      'Expected method in decompiled class');
+        'Expected method in decompiled class');
 
     console.log('✓ Successfully decompiled from path');
 
@@ -85,16 +90,17 @@ async function runTests() {
       });
 
       console.log('Decompile package response received:',
-        decompilePackageResponse ? 'Success' : 'Error');
+          decompilePackageResponse ? 'Success' : 'Error');
 
       assert(decompilePackageResponse && decompilePackageResponse.content,
-        'Expected content in response');
+          'Expected content in response');
 
       const packageText = decompilePackageResponse.content[0]?.text || '';
       assert(packageText, 'Expected text content in result');
       console.log('✓ Successfully decompiled from package');
     } catch (error) {
-      console.log('✓ Expected error when decompiling from package:', error.message);
+      console.log('✓ Expected error when decompiling from package:',
+          error.message);
     }
 
     console.log('\nTest 4: Testing decompile-from-jar tool...');
@@ -109,15 +115,18 @@ async function runTests() {
       });
 
       console.log('Decompile jar response received:',
-        decompileJarResponse ? 'Success' : 'Error');
+          decompileJarResponse ? 'Success' : 'Error');
 
       assert(decompileJarResponse && decompileJarResponse.content,
-        'Expected content in response');
+          'Expected content in response');
 
       const jarText = decompileJarResponse.content[0]?.text || '';
-      assert(jarText.includes('class SampleClass'), 'Expected decompiled class in result');
-      assert(jarText.includes('void printMessage()'), 'Expected method in decompiled class');
-      console.log('✓ Successfully decompiled from JAR with explicit class name');
+      assert(jarText.includes('class SampleClass'),
+          'Expected decompiled class in result');
+      assert(jarText.includes('void printMessage()'),
+          'Expected method in decompiled class');
+      console.log(
+          '✓ Successfully decompiled from JAR with explicit class name');
 
       const decompileJarMissingClassResponse = await client.callTool({
         name: 'decompile-from-jar',
@@ -127,13 +136,16 @@ async function runTests() {
       });
 
       console.log('Decompile jar (missing className) response received:',
-        decompileJarMissingClassResponse ? 'Success' : 'Error');
+          decompileJarMissingClassResponse ? 'Success' : 'Error');
 
-      assert(decompileJarMissingClassResponse && decompileJarMissingClassResponse.content,
-        'Expected content in response');
+      assert(decompileJarMissingClassResponse
+          && decompileJarMissingClassResponse.content,
+          'Expected content in response');
 
-      const missingClassText = decompileJarMissingClassResponse.content[0]?.text || '';
-      assert(missingClassText.includes('Error:'), 'Expected error message for missing className');
+      const missingClassText = decompileJarMissingClassResponse.content[0]?.text
+          || '';
+      assert(missingClassText.includes('Error:'),
+          'Expected error message for missing className');
       console.log('✓ Successfully returned error for missing className');
 
     } catch (error) {
@@ -152,9 +164,11 @@ async function runTests() {
 
     console.log('Invalid path response:', invalidPathResponse);
 
-    assert(invalidPathResponse && invalidPathResponse.content, 'Expected content in response');
+    assert(invalidPathResponse && invalidPathResponse.content,
+        'Expected content in response');
     const errorText = invalidPathResponse.content[0]?.text || '';
-    assert(errorText.includes('Error:'), 'Expected error message in response content');
+    assert(errorText.includes('Error:'),
+        'Expected error message in response content');
 
     console.log('✓ Error handling works correctly');
     console.log('\nAll tests completed successfully!');

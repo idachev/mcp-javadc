@@ -1,6 +1,6 @@
 {
   "name": "@idachev/mcp-javadc",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Model Context Protocol (MCP) server for Java decompilation",
   "main": "index.js",
   "type": "module",
@@ -15,8 +15,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "node test/decompiler.test.js",
-    "test:mcp": "node test/mcp-tools.test.js",
+    "test": "node test/mcp-tools.test.js",
     "test:setup": "node test/create-test-fixtures.js",
     "lint": "eslint index.js",
     "lint:fix": "eslint --fix index.js",
