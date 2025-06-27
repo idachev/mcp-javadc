@@ -180,7 +180,7 @@ The CFR decompiler (@run-slicer/cfr) is a JavaScript port of the popular CFR Jav
 
 1. Standard Java class files
 2. Classes that are part of a known package structure
-3. Modern Java features (up through Java 14)
+3. Modern Java features (all Java versions)
 4. JAR files containing Java classes
 
 If you encounter issues with a specific class file, try:
